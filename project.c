@@ -44,7 +44,13 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 /* 10 Points */
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 {
+    if(PC % 4 != 0){
+        return 1; // Halt: PC not aligned
+    }
 
+    *instruction = Mem[PC >> 2]; // fetch instruction from memory
+     
+    return 0; // No Halt
 }
 
 
@@ -52,7 +58,13 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 /* 10 Points */
 void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsigned *r2, unsigned *r3, unsigned *funct, unsigned *offset, unsigned *jsec)
 {
-
+    *op = (instruction >> 26) & 0x3F; // get opcode (6 bits) [bits 31-26], 0x3F = 111111 which keeps the last 6 bits
+    *r1 = (instruction >> 21) & 0x1F; // get rs (5 bits) [bits 25-21], 0x1F = 11111 which keeps the last 5 bits
+    *r2 = (instruction >> 16) & 0x1F; // get rt (5 bits) [bits 20-16], 0x1F = 11111 which keeps the last 5 bits
+    *r3 = (instruction >> 11) & 0x1F; // get rd (5 bits) [bits 15-11], 0x1F = 11111 which keeps the last 5 bits
+    *funct = instruction & 0x3F; // get funct (6 bits) [bits 5-0], 0x3F = 111111 which keeps the last 6 bits
+    *offset = instruction & 0xFFFF; // get offset (16 bits) [bits 15-0], 0xFFFF = 1111111111111111 which keeps the last 16 bits
+    *jsec = instruction & 0x03FFFFFF; // get jump address (26 bits) [bits 25-0], 0x03FFFFFF = 000000000000000000000000001111111111111111 which keeps the last 26 bits
 }
 
 
