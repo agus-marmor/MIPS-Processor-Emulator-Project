@@ -47,6 +47,10 @@ int instruction_fetch(unsigned PC, unsigned* Mem, unsigned* instruction)
         return 1; // Halt: PC not aligned
     }
 
+    if(PC < 0 || PC >= (65536 >> 2)) {
+        return 1; // Halt: PC out of range
+    }
+
     *instruction = Mem[PC >> 2]; // fetch instruction from memory
 
     return 0; // No Halt
