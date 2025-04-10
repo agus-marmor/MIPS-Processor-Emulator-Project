@@ -8,33 +8,51 @@ void ALU(unsigned A, unsigned B, char ALUControl, unsigned* ALUresult, char* Zer
     switch (ALUControl) {
     case 0: // sum
         *ALUresult = A + B;
+        if(*ALUresult == 0) {
+            *Zero = 1;
+        } else {
+            *Zero = 0;
+        }
         break;
     case 1: // sub
         *ALUresult = A - B;
+        if(*ALUresult == 0) {
+            *Zero = 1;
+        } else {
+            *Zero = 0;
+        }
         break;
     case 2: // A < B
-        if (A < B)
+        if (A < B){
             *Zero = 1;
-        else
+            *ALUresult = 1;
+        }else
             *Zero = 0;
+            *ALUresult = 0;
         break;
     case 3: // A < B (unsigned)
-        if ((unsigned)A < (unsigned)B)
+        if ((unsigned)A < (unsigned)B){
             *Zero = 1;
-        else
+            *ALUresult = 1;
+        }else
             *Zero = 0;
+            *ALUresult = 0;
         break;
     case 4: // and
         *ALUresult = A & B;
+        *Zero = 0;
         break;
     case 5: // or
         *ALUresult = A | B;
+        *Zero = 0;
         break;
     case 6: // shift left by 16 bits
         *ALUresult = B << 16;
+        *Zero = 0;
         break;
     case 7: // not
         *ALUresult = ~A;
+        *Zero = 0;
         break;
     }
 }
