@@ -2,7 +2,7 @@
 
 /* ALU */
 /* 10 Points */
-void ALU(unsigned A, unsigned B, char ALUControl, unsigned *ALUresult, char *Zero)
+void ALU(unsigned A, unsigned B, char ALUControl, unsigned* ALUresult, char* Zero)
 {
     switch (ALUControl)
     {
@@ -69,7 +69,7 @@ void ALU(unsigned A, unsigned B, char ALUControl, unsigned *ALUresult, char *Zer
 
 /* instruction fetch */
 /* 10 Points */
-int instruction_fetch(unsigned PC, unsigned *Mem, unsigned *instruction)
+int instruction_fetch(unsigned PC, unsigned* Mem, unsigned* instruction)
 {
     if (PC % 4 != 0)
     {
@@ -88,7 +88,7 @@ int instruction_fetch(unsigned PC, unsigned *Mem, unsigned *instruction)
 
 /* instruction partition */
 /* 10 Points */
-void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1, unsigned *r2, unsigned *r3, unsigned *funct, unsigned *offset, unsigned *jsec)
+void instruction_partition(unsigned instruction, unsigned* op, unsigned* r1, unsigned* r2, unsigned* r3, unsigned* funct, unsigned* offset, unsigned* jsec)
 {
     *op = (instruction >> 26) & 0x3F; // get opcode (6 bits) [bits 31-26], 0x3F = 111111 which keeps the last 6 bits
     *r1 = (instruction >> 21) & 0x1F; // get rs (5 bits) [bits 25-21], 0x1F = 11111 which keeps the last 5 bits
@@ -101,7 +101,7 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1, uns
 
 /* instruction decode */
 /* 15 Points */
-int instruction_decode(unsigned op, struct_controls *controls)
+int instruction_decode(unsigned op, struct_controls* controls)
 {
     // Initialize control signals based on the opcode
     switch (op)
@@ -223,105 +223,101 @@ int instruction_decode(unsigned op, struct_controls *controls)
 
 /* Read Register */
 /* 5 Points */
-void read_register(unsigned r1, unsigned r2, unsigned *Reg, unsigned *data1, unsigned *data2)
+void read_register(unsigned r1, unsigned r2, unsigned* Reg, unsigned* data1, unsigned* data2)
 {
-    // Latrell
-    *data1 = Reg[r1];
-    *data2 = Reg[r2];
+    *data1 = Reg[r1]; // Read data from registers r1 and r2
+    *data2 = Reg[r2]; // Read data from registers r1 and r2
 }
 
 /* Sign Extend */
 /* 10 Points */
-void sign_extend(unsigned offset, unsigned *extended_value)
+void sign_extend(unsigned offset, unsigned* extended_value)
 {
     // Assign the sign-extended value of offset to extended_value
     // Get msb, if 1 extend with negative values (1s) and 0s if positive
     if (offset & (1 << 15))
     {
-        *extended_value = offset | 0xFFFF0000;
+        *extended_value = offset | 0xFFFF0000; // Extend with 1s
     }
     else
     {
-        *extended_value = offset | 0x0000FFFF;
+        *extended_value = offset | 0x0000FFFF; // Extend with 0s
     }
 }
 
 /* ALU operations */
 /* 10 Points */
-int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value, unsigned funct, char ALUOp, char ALUSrc, unsigned *ALUresult, char *Zero)
+int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value, unsigned funct, char ALUOp, char ALUSrc, unsigned* ALUresult, char* Zero)
 {
     // Determining whether to use data2 or extended value
-    unsigned dataNew;
-    if (ALUSrc == 1)
-    {
-        dataNew = extended_value;
-    }
-    else
-    {
-        dataNew = data2;
-    }
+    unsigned operand = (ALUSrc == 1) ? extended_value : data2;
 
     char operation;
-    if (ALUOp == 2)
+    if (ALUOp == 7) // R-type
     {
         switch (funct)
         {
         case 32:
-            operation = 0;
+            operation = 0; // add
             break;
         case 34:
-            operation = 1;
+            operation = 1; // sub
             break;
         case 42:
-            operation = 2;
+            operation = 2; // slt
             break;
         case 43:
-            operation = 3;
+            operation = 3; // sltu
             break;
         case 36:
-            operation = 4;
+            operation = 4; // and
             break;
         case 37:
-            operation = 5;
+            operation = 5; // or
             break;
         case 15:
-            operation = 6;
+            operation = 6; // sll
             break;
         case 39:
-            operation = 7;
+            operation = 7; // not
             break;
         default:
-            return 1;
+            return 1; // Invalid funct code, halt the program
             break;
         }
-        
-    } else if(ALUOp == 1){
-        operation = 1;
-    } else if(ALUOp == 0){
-        operation = 0;
-    } else {
-        return 1;
+
+    }
+    else {
+        switch (ALUOp) // I-type
+        {
+        case 0: operation = 0; break; // add (e.g., lw, sw, addi)
+        case 1: operation = 1; break; // sub (e.g., beq)
+        case 2: operation = 2; break; // slt (e.g., slti)
+        case 3: operation = 3; break; // sltu (e.g., sltiu)
+        case 6: operation = 6; break; // lui
+        default: return 1; // unknown ALUOp
+        }
     }
 
-    ALU(data1, dataNew, operation, ALUresult, Zero);
+    ALU(data1, operand, operation, ALUresult, Zero); 
 
     return 0;
 }
 
 /* Read / Write Memory */
 /* 10 Points */
-int rw_memory(unsigned ALUresult, unsigned data2, char MemWrite, char MemRead, unsigned *memdata, unsigned *Mem)
+int rw_memory(unsigned ALUresult, unsigned data2, char MemWrite, char MemRead, unsigned* memdata, unsigned* Mem)
 {
 }
 
 /* Write Register */
 /* 10 Points */
-void write_register(unsigned r2, unsigned r3, unsigned memdata, unsigned ALUresult, char RegWrite, char RegDst, char MemtoReg, unsigned *Reg)
+void write_register(unsigned r2, unsigned r3, unsigned memdata, unsigned ALUresult, char RegWrite, char RegDst, char MemtoReg, unsigned* Reg)
 {
 }
 
 /* PC update */
 /* 10 Points */
-void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, char Zero, unsigned *PC)
+void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, char Zero, unsigned* PC)
 {
 }
