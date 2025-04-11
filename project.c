@@ -215,7 +215,9 @@ int instruction_decode(unsigned op, struct_controls* controls)
 /* 5 Points */
 void read_register(unsigned r1, unsigned r2, unsigned* Reg, unsigned* data1, unsigned* data2)
 {
-
+    // Latrell
+    *data1 = Reg[r1];
+    *data2 = Reg[r2];
 }
 
 
@@ -223,7 +225,12 @@ void read_register(unsigned r1, unsigned r2, unsigned* Reg, unsigned* data1, uns
 /* 10 Points */
 void sign_extend(unsigned offset, unsigned* extended_value)
 {
-
+    //Assign the sign-extended value of offset to extended_value
+    //Get most sig bit, if 1 extend with negative values 
+    extended_value = 
+    int mask = offset >> 16;
+    
+    
 }
 
 /* ALU operations */
