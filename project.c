@@ -118,7 +118,7 @@ int instruction_decode(unsigned op, struct_controls* controls)
         controls->RegWrite = 1;
         break;
 
-    case 2:                   // J-type instruction
+    case 2: // J-type instruction (Jump)
         controls->RegDst = 2; // Don't care
         controls->Jump = 1;
         controls->Branch = 0;
@@ -130,7 +130,7 @@ int instruction_decode(unsigned op, struct_controls* controls)
         controls->RegWrite = 0;
         break;
 
-    case 4:                   // BEQ instruction
+    case 4: // BEQ instruction
         controls->RegDst = 2; // Don't care
         controls->Jump = 0;
         controls->Branch = 1;
@@ -202,7 +202,7 @@ int instruction_decode(unsigned op, struct_controls* controls)
         controls->RegWrite = 1;
         break;
 
-    case 43:                  // sw instruction
+    case 43:// sw instruction
         controls->RegDst = 2; // Don't care
         controls->Jump = 0;
         controls->Branch = 0;
@@ -257,33 +257,14 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value, unsi
     {
         switch (funct)
         {
-        case 32:
-            operation = 0; // add
-            break;
-        case 34:
-            operation = 1; // sub
-            break;
-        case 42:
-            operation = 2; // slt
-            break;
-        case 43:
-            operation = 3; // sltu
-            break;
-        case 36:
-            operation = 4; // and
-            break;
-        case 37:
-            operation = 5; // or
-            break;
-        case 15:
-            operation = 6; // sll
-            break;
-        case 39:
-            operation = 7; // not
-            break;
+        case 32: operation = 0; break; // add
+        case 34: operation = 1; break; // sub
+        case 42: operation = 2; break; // slt
+        case 43: operation = 3; break; // sltu
+        case 36: operation = 4; break; // and
+        case 37: operation = 5; break; // or
         default:
             return 1; // Invalid funct code, halt the program
-            break;
         }
 
     }
@@ -295,11 +276,11 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value, unsi
         case 2: operation = 2; break; // slt (e.g., slti)
         case 3: operation = 3; break; // sltu (e.g., sltiu)
         case 6: operation = 6; break; // lui
-        default: return 1; // unknown ALUOp
+        default: return 1; //  Invalid ALUOp, halt the program
         }
     }
 
-    ALU(data1, operand, operation, ALUresult, Zero); 
+    ALU(data1, operand, operation, ALUresult, Zero);
 
     return 0;
 }
