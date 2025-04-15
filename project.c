@@ -296,10 +296,21 @@ int rw_memory(unsigned ALUresult, unsigned data2, char MemWrite, char MemRead, u
 /* 10 Points */
 void write_register(unsigned r2, unsigned r3, unsigned memdata, unsigned ALUresult, char RegWrite, char RegDst, char MemtoReg, unsigned* Reg)
 {
+    if((RegWrite == 1) && (MemtoReg == 1)){
+        Reg[RegDst] = memdata;
+    }
+    else if((RegWrite == 1) && (MemtoReg == 0)){
+        Reg[RegDst] = ALUresult;
+    }
+
 }
 
 /* PC update */
 /* 10 Points */
 void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, char Zero, unsigned* PC)
 {
+    PC += 4;
+    if(Jump == 1){
+        jsec<<2;
+    }
 }
