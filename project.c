@@ -1,3 +1,10 @@
+/*
+* Author: Latrell Kong, Agustin Marmor, and Jose Blanco
+* Course: Computer Logic and Organization
+* Assignment: Project - MIPS_Processor_Emulator
+* Date: April 2, 2025
+*/
+
 #include "spimcore.h"
 
 /* ALU */
